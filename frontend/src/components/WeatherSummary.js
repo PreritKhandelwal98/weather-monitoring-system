@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { getWeatherSummary } from '../services/weatherService';
+import { getWeatherSummary, setThreshold } from '../services/weatherService'; // Import the setThreshold function
 import { Line } from 'react-chartjs-2';
 
 const WeatherSummary = ({ city }) => {
     const [summary, setSummary] = useState(null);
+    const [threshold, setThresholdTemp] = useState('');  // For the input value
+    const [consecutiveLimit, setConsecutiveLimit] = useState(2);  // Optional consecutive limit
 
     useEffect(() => {
         const fetchSummary = async () => {
@@ -12,6 +14,21 @@ const WeatherSummary = ({ city }) => {
         };
         fetchSummary();
     }, [city]);
+
+    const handleThresholdSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            // Call your API to set the threshold
+            const response = await setThreshold({
+                city,
+                tempThreshold: parseFloat(threshold),
+            });
+            alert(`Threshold set successfully for ${city}`);
+        } catch (error) {
+            console.error('Error setting threshold:', error);
+            alert('Failed to set threshold.');
+        }
+    };
 
     if (!summary) return <div>Loading...</div>;
 
@@ -22,6 +39,23 @@ const WeatherSummary = ({ city }) => {
             <p>Max Temperature: {summary.max_temp}°C</p>
             <p>Min Temperature: {summary.min_temp}°C</p>
             <p>Weather Condition: {summary.weather}</p>
+
+            {/* Threshold form */}
+            <div>
+                <h4>Set Temperature Threshold</h4>
+                <form onSubmit={handleThresholdSubmit}>
+                    <label>
+                        Threshold Temperature (°C):
+                        <input
+                            type="number"
+                            value={threshold}
+                            onChange={(e) => setThresholdTemp(e.target.value)}
+                            required
+                        />
+                    </label>
+                    <button type="submit">Set Threshold</button>
+                </form>
+            </div>
 
             {/* Example chart (using random data) */}
             {/* <Line

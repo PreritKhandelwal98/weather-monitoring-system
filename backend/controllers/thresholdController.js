@@ -1,18 +1,85 @@
 import Threshold from '../models/thresholdSchema.js';
 import nodemailer from 'nodemailer';
 
-// Trigger Alert (Console or Email)
-async function triggerAlert(city, message) {
-    console.log(`ALERT for ${city}: ${message}`);
 
-    // Send email alert if enabled
+// Check Threshold Breach
+// Tracking consecutive breaches for each city
+const consecutiveBreaches = {};
+
+// Check if weather data exceeds the user's threshold
+export const checkThreshold = async (city, weatherData) => {
+    const temp = parseFloat(weatherData.temp);
+    console.log("this is threshold temp called", temp);
+
+    // Fetch the threshold for the city from the database
     const threshold = await Threshold.findOne({ city });
-    if (threshold && threshold.emailAlert) {
-        sendEmailNotification(city, message, threshold.recipient);
-    }
-}
 
-// Email Notification
+    if (!threshold) {
+        console.log(`No threshold set for ${city}.`);
+        return;
+    }
+
+    const userThreshold = threshold.tempThreshold;
+    console.log("this is temp set by user", userThreshold);
+
+    const consecutiveLimit = 2;
+    console.log("this is consecutive limit check", consecutiveLimit);
+
+
+    // Initialize tracking for this city
+    if (!consecutiveBreaches[city]) {
+        consecutiveBreaches[city] = 0;
+    }
+
+    // Check if temperature exceeds threshold
+    if (temp > userThreshold) {
+        console.log("current temp is greater than the user Threshold temp");
+
+        consecutiveBreaches[city] += 1;
+        console.log(`This is breach count: ${consecutiveBreaches[city]} for the city: ${city}`);
+
+
+        // If the limit is breached for consecutive updates, trigger an alert
+        if (consecutiveBreaches[city] >= consecutiveLimit) {
+            // Trigger alert (console or email)
+            triggerAlert(city, temp, userThreshold, consecutiveLimit);
+            console.log("alert triggered");
+
+
+            // Reset the consecutive breach count after alerting
+            consecutiveBreaches[city] = 0;
+        }
+    } else {
+        // Reset the breach count if the temperature is below the threshold
+        consecutiveBreaches[city] = 0;
+    }
+};
+
+// Function to trigger alert (email or console)
+const triggerAlert = async (city, currentTemp, thresholdTemp, consecutiveLimit) => {
+    const message = `ALERT: Temperature in ${city} exceeded the threshold of ${thresholdTemp}°C for ${consecutiveLimit} consecutive updates. Current Temperature: ${currentTemp}°C`;
+
+    // Log the alert to the console
+    console.log(message);
+
+    // Optional: Send an email alert if needed
+    // Replace with your nodemailer setup
+    // const transporter = nodemailer.createTransport({
+    //     service: 'gmail',
+    //     auth: {
+    //         user: process.env.EMAIL_USER,
+    //         pass: process.env.EMAIL_PASS,
+    //     },
+    // });
+    // const mailOptions = {
+    //     from: process.env.EMAIL_USER,
+    //     to: 'user@example.com',  // Replace with the recipient email
+    //     subject: `Weather Alert for ${city}`,
+    //     text: message,
+    // };
+    // await transporter.sendMail(mailOptions);
+};
+
 async function sendEmailNotification(city, message, recipient) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -35,29 +102,4 @@ async function sendEmailNotification(city, message, recipient) {
     } catch (error) {
         console.error('Error sending email:', error);
     }
-}
-
-// Check Threshold Breach
-export async function checkThreshold(city, weatherData) {
-    const threshold = await Threshold.findOne({ city });
-    if (!threshold) return;  // Exit if no threshold set for the city
-
-    const temp = parseFloat(weatherData.temp);
-    if (temp > threshold.tempThreshold) {
-        // Handle consecutive breaches logic (as per the model)
-        if (!threshold.consecutiveBreaches) {
-            threshold.consecutiveBreaches = 1;
-        } else {
-            threshold.consecutiveBreaches += 1;
-        }
-
-        if (threshold.consecutiveBreaches >= threshold.consecutiveLimit) {
-            triggerAlert(city, `Temperature exceeded ${threshold.tempThreshold}°C for ${threshold.consecutiveLimit} consecutive updates.`);
-            threshold.consecutiveBreaches = 0;  // Reset after alert
-        }
-    } else {
-        threshold.consecutiveBreaches = 0;  // Reset if below threshold
-    }
-
-    await threshold.save();
 }

@@ -3,7 +3,6 @@ import { API_KEY, CITIES } from '../utils/config.js';
 import { saveWeatherData } from '../models/weatherSchema.js'; // Keep this as a named import
 import Weather from '../models/weatherSchema.js'; // Import Weather as a default import
 import { checkThreshold } from './thresholdController.js';
-import nodemailer from 'nodemailer';
 
 // Convert Kelvin to Celsius
 const kelvinToCelsius = (tempK) => (tempK - 273.15).toFixed(2);
@@ -31,9 +30,15 @@ export async function storeAndProcessWeatherData() {
 
             // Save weather data to MongoDB
             await saveWeatherData(weatherData);
+            console.log("Data saved in the database");
+
 
             // Check for temperature threshold breach
+            console.log("this is before threshold check");
+
             await checkThreshold(city, weatherData);
+            console.log("this is after threshold check");
+
         } catch (err) {
             console.error(`Error fetching data for ${city}:`, err);
         }

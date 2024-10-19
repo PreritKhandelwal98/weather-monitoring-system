@@ -6,6 +6,7 @@ const router = express.Router();
 // Set or update temperature thresholds for a city
 router.post('/set-threshold', async (req, res) => {
     const { city, tempThreshold, consecutiveLimit } = req.body;
+    console.log("this get called", city);
 
     try {
         let threshold = await Threshold.findOne({ city });
