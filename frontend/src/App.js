@@ -1,23 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+// frontend/src/App.js
+import React, { useState } from 'react';
+import WeatherSummary from './components/WeatherSummary';
 
 function App() {
+  const [city, setCity] = useState('Delhi');
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Weather Monitoring System</h1>
+      <select onChange={(e) => setCity(e.target.value)} value={city}>
+        <option value="Delhi">Delhi</option>
+        <option value="Mumbai">Mumbai</option>
+        <option value="Chennai">Chennai</option>
+        <option value="Bangalore">Bangalore</option>
+        <option value="Kolkata">Kolkata</option>
+        <option value="Hyderabad">Hyderabad</option>
+      </select>
+      <WeatherSummary city={city} />
     </div>
   );
 }
