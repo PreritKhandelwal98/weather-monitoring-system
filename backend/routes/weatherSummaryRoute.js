@@ -1,5 +1,5 @@
 import express from 'express';
-import { getDailySummary } from '../controllers/weatherController.js';
+import { getDailySummary, weatherHistory } from '../controllers/weatherController.js';
 
 const router = express.Router();
 
@@ -20,5 +20,8 @@ router.get('/summary/:city', async (req, res) => {
         res.status(500).json({ message: 'Error retrieving data.', error: error.message });
     }
 });
+
+router.get('/weather-history/:city', weatherHistory);
+
 
 export default router;

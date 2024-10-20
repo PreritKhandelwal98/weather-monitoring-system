@@ -66,7 +66,89 @@ option {
   text-align: left;
 }
 
+.forecast-section {
+  margin-top: 20px;
+}
 
+.forecast-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.forecast-card {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  text-align: center;
+  margin: 10px;
+  flex: 1 1 calc(20% - 20px); /* Each card will take 20% of the width, minus spacing */
+  max-width: 180px; /* Optional max width to control card size */
+}
+
+.forecast-day {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.forecast-icon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 5px;
+}
+
+.forecast-temp {
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.weather-card-container {
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+.weather-card {
+  background-color: rgba(255, 255, 255, 0.5); /* Light background color */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 20px; /* Padding inside the card */
+  margin: 20px; /* Margin around the card */
+  max-width: 300px; /* Max width for the card */
+  text-align: center; /* Center text */
+}
+
+.temp {
+  display: flex; /* Use flexbox to align items */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  margin-bottom: 15px; /* Space below the temperature section */
+}
+
+.temperature-info {
+  margin-left: 10px; /* Space between icon and temperature */
+}
+
+.temperature {
+  font-size: 2rem; /* Larger font size for temperature */
+  font-weight: bold; /* Bold font for emphasis */
+}
+
+.weather-des {
+  font-size: 1rem; /* Normal font size for description */
+  color: #666; /* Lighter color for weather description */
+}
+
+.summary-details p {
+  margin: 5px 0; /* Space between details */
+  font-size: 0.9rem; /* Smaller font size for details */
+}
+
+.temp-deg {
+  cursor: pointer; /* Indicate that the degree symbol is clickable */
+  color: #007bff; /* Change color for better visibility */
+}
 
 .App {
   text-align: center;

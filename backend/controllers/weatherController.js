@@ -81,3 +81,22 @@ export const getDailySummary = async (city) => {
         throw error;
     }
 };
+
+export const weatherHistory = async (req, res) => {
+    const { city } = req.params;
+    try {
+        // Fetch the latest 5 weather records for the city
+        const weatherData = await Weather.find({ city })
+            .sort({ timestamp: -1 }) // Sort by timestamp in descending order (latest first)
+            .limit(4); // Limit to the last 5 records
+
+        if (weatherData.length === 0) {
+            return res.status(404).json({ message: `No data found for city: ${city}` });
+        }
+
+        res.json(weatherData);
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};

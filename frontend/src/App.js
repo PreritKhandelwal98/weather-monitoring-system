@@ -38,6 +38,7 @@ function App() {
 
         {/* Dropdown for selecting city */}
         <div className="flex justify-center mb-6">
+          <h3 className="mr-2">Get Weather Summary of:</h3> {/* Add margin-right to the h4 */}
           <select
             onChange={(e) => setCity(e.target.value)}
             value={city}
