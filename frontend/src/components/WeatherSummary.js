@@ -129,7 +129,7 @@ const WeatherSummary = ({ city }) => {
                     </div>
                 </div>
             </div>
-            <small className="info-text">Above is the detail summary of the city {city} </small>
+            <small className="info-text">Above is the summarized insights of the city {city} </small>
 
 
             {/* Threshold form */}
