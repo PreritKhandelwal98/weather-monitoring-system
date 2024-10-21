@@ -3,7 +3,7 @@ import { API_KEY, CITIES } from '../utils/config.js';
 import { saveWeatherData } from '../models/weatherSchema.js'; // Keep this as a named import
 import Weather from '../models/weatherSchema.js'; // Import Weather as a default import
 import { checkThreshold } from './thresholdController.js';
-
+import WeatherSummary from '../models/summarySchema.js';
 // Convert Kelvin to Celsius
 const kelvinToCelsius = (tempK) => (tempK - 273.15).toFixed(2);
 
@@ -53,34 +53,54 @@ export const getDailySummary = async (city) => {
         const startOfDay = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 0, 0, 0));
         const endOfDay = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
 
-        console.log("This is start of day in UTC:", startOfDay);  // This will now correctly show the start of today in UTC
-        console.log("This is end of day in UTC:", endOfDay);      // This will now correctly show the end of today in UTC
-
-
+        // console.log("This is start of day in UTC:", startOfDay);
+        // console.log("This is end of day in UTC:", endOfDay);
 
         // Aggregate weather data only for the current day
         const summary = await Weather.aggregate([
             {
                 $match: {
                     city: city,
-                    timestamp: { $gte: startOfDay, $lte: endOfDay }, // Match timestamps within today's range
+                    timestamp: { $gte: startOfDay, $lte: endOfDay },
                 }
             },
             {
                 $group: {
                     _id: null,
-                    avg_temp: { $avg: "$temp" }, // Calculate the average temperature
-                    max_temp: { $max: "$temp" }, // Get the maximum temperature
-                    min_temp: { $min: "$temp" }, // Get the minimum temperature
-                    // Group weather descriptions; for example, you can take the most common one or just the first
-                    weather: { $first: "$weather" }, // Take the first recorded weather description for simplicity
+                    avg_temp: { $avg: "$temp" },
+                    max_temp: { $max: "$temp" },
+                    min_temp: { $min: "$temp" },
+                    weather: { $first: "$weather" },
                 }
             }
         ]);
 
         // Return the summary or handle the case where no data is found for the current day
         if (summary.length > 0) {
-            console.log('Weather summary for today:', summary[0]);
+            // console.log('Weather summary for today:', summary[0]);
+
+            // Check if today's summary already exists in WeatherSummary collection
+            const existingSummary = await WeatherSummary.findOne({ city, timestamp: { $gte: startOfDay, $lt: endOfDay } });
+
+            // If no existing summary, create a new one
+            if (!existingSummary) {
+                const newSummary = new WeatherSummary({
+                    city: city,
+                    avg_temp: summary[0].avg_temp,
+                    max_temp: summary[0].max_temp,
+                    min_temp: summary[0].min_temp,
+                    weather: summary[0].weather,
+                    timestamp: new Date() // Store the current timestamp
+                });
+
+                // Save the summary to the database
+                await newSummary.save();
+                // console.log('Daily summary saved to the database:', newSummary);
+            } else {
+                console.log(`Summary for ${city} already exists for today.`);
+            }
+
+            // Return the aggregated summary data to the user
             return summary[0];
         } else {
             console.log(`No data found for ${city} today`);
@@ -91,6 +111,7 @@ export const getDailySummary = async (city) => {
         throw error;
     }
 };
+
 
 
 export const weatherHistory = async (req, res) => {

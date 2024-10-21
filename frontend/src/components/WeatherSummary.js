@@ -42,7 +42,8 @@ const WeatherSummary = ({ city }) => {
                 city,
                 tempThreshold: parseFloat(threshold),
             });
-            toast.success(`Threshold set successfully for ${city}`);
+            toast.success(`Alert set successfully for ${city}`);
+            setThresholdTemp('');
         } catch (error) {
             console.error('Error setting threshold:', error);
             alert('Failed to set threshold.');
@@ -68,17 +69,6 @@ const WeatherSummary = ({ city }) => {
     // Toggle temperature unit
     const toggleTemperatureUnit = () => {
         setIsCelsius((prevState) => !prevState);
-    };
-
-    // Function to format the date and time
-    const formatDateTime = (timestamp) => {
-        const date = new Date(timestamp);
-        return date.toLocaleString('en-US', {
-            weekday: 'short', // "Mon", "Tue", etc.
-            hour: 'numeric',  // "1 PM", "12 AM", etc.
-            minute: 'numeric', // "1:30 PM"
-            hour12: true,     // Use 12-hour format
-        });
     };
 
     // Function to map weather conditions to ReactAnimatedWeather icon names
@@ -139,10 +129,12 @@ const WeatherSummary = ({ city }) => {
                     </div>
                 </div>
             </div>
+            <small className="info-text">Above is the detail summary of the city {city} </small>
+
 
             {/* Threshold form */}
             <div className="threshold-section">
-                <h4>Set Temperature Threshold</h4>
+                <h4>Set Temperature Alert</h4>
                 <form onSubmit={handleThresholdSubmit} className="threshold-form">
                     <div className="input-group">
                         <label>Threshold Temperature (°C):</label>
@@ -152,13 +144,16 @@ const WeatherSummary = ({ city }) => {
                             onChange={(e) => setThresholdTemp(e.target.value)}
                             required
                             className="threshold-input"
+                            placeholder='Enter Temprature'
                         />
                     </div>
                     <button type="submit" className="threshold-button">
-                        Set Threshold
+                        Set Alert
                     </button>
                 </form>
             </div>
+            <small className="info-text">You can set the alert if certain temprature breaches</small>
+
 
 
             {/* 5-Day Forecast */}
@@ -189,8 +184,10 @@ const WeatherSummary = ({ city }) => {
                     ))}
                 </div>
             </div>
+            <small className="info-text">The above detail is about previous day's weather history</small>
 
         </div>
+
     );
 };
 

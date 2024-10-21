@@ -252,6 +252,14 @@ option {
   margin-bottom: 20px;
 }
 
+.info-text {
+  display: block; /* Make it occupy the full width */
+  margin-top: 5px; /* Space above */
+  font-size: 0.8rem; /* Smaller font size */
+  color: #f06789; /* Lighter color for less emphasis */
+}
+
+
 .weather-info {
   display: flex;
   justify-content: space-evenly;
