@@ -25,9 +25,7 @@ const WeatherSummary = ({ city }) => {
         const fetchForecast = async () => {
             try {
                 // Sample API for a 5-day weather forecast
-                const response = await axios.get(`http://localhost:5000/api/weather/weather-history/${city}`);
-                console.log("this is history response", response.data);
-
+                const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/weather/weather-history/${city}`);
                 setForecast(response.data); // Take the first 5 days
             } catch (error) {
                 console.error('Error fetching forecast data:', error);
@@ -55,12 +53,17 @@ const WeatherSummary = ({ city }) => {
     const convertToFahrenheit = (temperature) => Math.round((temperature * 9) / 5 + 32);
 
     const renderTemperature = (temperature) => {
+        if (temperature == null || isNaN(temperature)) {
+            return 'N/A';  // Return "N/A" if temperature is not available
+        }
         if (isCelsius) {
-            return Math.round(temperature);
+            return temperature.toFixed(2); // Show two decimal places in Celsius
         } else {
-            return convertToFahrenheit(temperature);
+            return convertToFahrenheit(temperature).toFixed(2); // Show two decimal places in Fahrenheit
         }
     };
+
+
 
     // Toggle temperature unit
     const toggleTemperatureUnit = () => {
@@ -160,25 +163,28 @@ const WeatherSummary = ({ city }) => {
 
             {/* 5-Day Forecast */}
             <div className="forecast-section">
-                <h4>Last 4 Weather Records</h4> {/* Since it's historical data, we reflect that in the title */}
+                <h4>Previous Days Weather Records</h4> {/* Since it's historical data, we reflect that in the title */}
                 <div className="forecast-container">
                     {forecast && forecast.map((day, index) => (
                         <div key={index} className="forecast-card">
                             {/* Display the formatted date of each record */}
-                            <p className="forecast-day">{formatDateTime(day.timestamp)}</p>
+                            <p className="forecast-day">{new Date(day._id).toLocaleDateString('en-GB')}</p>
 
                             {/* Display the weather description */}
-                            <ReactAnimatedWeather icon={getWeatherIcon(day.weather)} size="50" />
+                            <ReactAnimatedWeather icon={getWeatherIcon(day.weather)} size="30" />
 
                             {/* Temperature data */}
-                            <p className="forecast-temp">
-                                Temp: {renderTemperature(day.temp)}° {isCelsius ? 'C' : 'F'}
-                            </p>
+                            <h4 className="forecast-temp">
+                                Average Temp: {renderTemperature(day.avg_temp)}° {isCelsius ? 'C' : 'F'}
+                            </h4>
 
                             {/* Feels like temperature */}
-                            <p className="forecast-feels">
-                                Feels like: {renderTemperature(day.feels_like)}° {isCelsius ? 'C' : 'F'}
-                            </p>
+                            <h4 className="forecast-feels">
+                                Max Temp: {renderTemperature(day.max_temp)}° {isCelsius ? 'C' : 'F'}
+                            </h4>
+                            <h4 className="forecast-feels">
+                                Min Temp: {renderTemperature(day.min_temp)}° {isCelsius ? 'C' : 'F'}
+                            </h4>
                         </div>
                     ))}
                 </div>

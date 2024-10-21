@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import WeatherSummary from './components/WeatherSummary';
+import 'react-toastify/dist/ReactToastify.css';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -17,7 +18,7 @@ function App() {
     const fetchWeatherData = async () => {
       try {
         // Your backend API call to fetch weather summary based on city
-        const response = await axios.get(`http://localhost:5000/api/weather/summary/${city}`);
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/weather/summary/${city}`);
         setWeather({ data: response.data, loading: false, error: false });
       } catch (error) {
         setWeather({ data: {}, loading: false, error: true });

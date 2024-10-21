@@ -48,32 +48,42 @@ export async function storeAndProcessWeatherData() {
 // Get daily summary (average, max, min temperature)
 export const getDailySummary = async (city) => {
     try {
+        // Get the current date and calculate the start and end of the day (midnight to 11:59:59)
         const today = new Date();
-        const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const startOfDay = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 0, 0, 0));
+        const endOfDay = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
 
+        console.log("This is start of day in UTC:", startOfDay);  // This will now correctly show the start of today in UTC
+        console.log("This is end of day in UTC:", endOfDay);      // This will now correctly show the end of today in UTC
+
+
+
+        // Aggregate weather data only for the current day
         const summary = await Weather.aggregate([
             {
                 $match: {
                     city: city,
-                    timestamp: { $gte: startOfDay },
+                    timestamp: { $gte: startOfDay, $lte: endOfDay }, // Match timestamps within today's range
                 }
             },
             {
                 $group: {
                     _id: null,
-                    avg_temp: { $avg: "$temp" },
-                    max_temp: { $max: "$temp" },
-                    min_temp: { $min: "$temp" },
-                    weather: { $first: "$weather" },
+                    avg_temp: { $avg: "$temp" }, // Calculate the average temperature
+                    max_temp: { $max: "$temp" }, // Get the maximum temperature
+                    min_temp: { $min: "$temp" }, // Get the minimum temperature
+                    // Group weather descriptions; for example, you can take the most common one or just the first
+                    weather: { $first: "$weather" }, // Take the first recorded weather description for simplicity
                 }
             }
         ]);
 
+        // Return the summary or handle the case where no data is found for the current day
         if (summary.length > 0) {
-            console.log('Weather summary:', summary[0]);
+            console.log('Weather summary for today:', summary[0]);
             return summary[0];
         } else {
-            console.log(`No data found for ${city}`);
+            console.log(`No data found for ${city} today`);
             return null;
         }
     } catch (error) {
@@ -82,21 +92,54 @@ export const getDailySummary = async (city) => {
     }
 };
 
+
 export const weatherHistory = async (req, res) => {
     const { city } = req.params;
     try {
-        // Fetch the latest 5 weather records for the city
-        const weatherData = await Weather.find({ city })
-            .sort({ timestamp: -1 }) // Sort by timestamp in descending order (latest first)
-            .limit(4); // Limit to the last 5 records
+        // Aggregate data by day and calculate average, max, and min temps for each day
+        const weatherData = await Weather.aggregate([
+            {
+                $match: { city: city } // Match the specific city
+            },
+            {
+                // Convert timestamp to date only (ignores time)
+                $project: {
+                    city: 1,
+                    temp: 1,
+                    weather: 1,
+                    timestamp: 1,
+                    date: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } } // Get date only (YYYY-MM-DD)
+                }
+            },
+            {
+                // Group by date to aggregate the weather data for each day
+                $group: {
+                    _id: "$date", // Group by the date (YYYY-MM-DD)
+                    avg_temp: { $avg: "$temp" }, // Calculate average temperature
+                    max_temp: { $max: "$temp" }, // Find the maximum temperature
+                    min_temp: { $min: "$temp" }, // Find the minimum temperature
+                    weather: { $first: "$weather" }, // You can adjust this to how you want to handle weather conditions
+                    timestamp: { $first: "$timestamp" } // Capture a representative timestamp for sorting
+                }
+            },
+            {
+                // Sort by the date in descending order (latest first)
+                $sort: { _id: -1 }
+            },
+            {
+                // Limit to the last 4 days of weather data
+                $limit: 4
+            }
+        ]);
 
         if (weatherData.length === 0) {
             return res.status(404).json({ message: `No data found for city: ${city}` });
         }
 
-        res.json(weatherData);
+        res.json(weatherData); // Send the aggregated weather data
     } catch (error) {
         console.error('Error fetching weather data:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+

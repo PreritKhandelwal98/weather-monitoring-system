@@ -15,10 +15,10 @@ app.use('/api/weather', weatherRoutes);
 app.use('/api/threshold', thresholdRoutes);
 
 // Schedule weather updates every 5 minutes
-schedule.scheduleJob('*/5 * * * *', async () => {
-    console.log("Scheduled job triggered at", new Date().toLocaleString());
-    await storeAndProcessWeatherData();
-});
+// schedule.scheduleJob('*/5 * * * *', async () => {
+//     console.log("Scheduled job triggered at", new Date().toLocaleString());
+//     await storeAndProcessWeatherData();
+// });
 
 // Start the server
 const PORT = process.env.PORT || 5000;
