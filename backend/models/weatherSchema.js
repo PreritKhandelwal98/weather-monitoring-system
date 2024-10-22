@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 // Define the schema for weather data
 const weatherSchema = new mongoose.Schema({
     city: { type: String, required: true },
-    timestamp: { type: Date, default: Date.now },
+    timestamp: { type: Date },
     weather: { type: String, required: true },
     temp: { type: Number, required: true },
     speed: { type: Number },

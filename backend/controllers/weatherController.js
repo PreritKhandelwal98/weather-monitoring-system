@@ -49,6 +49,8 @@ export const getDailySummary = async (city) => {
     try {
         // Get the current date and calculate the start and end of the day (midnight to 11:59:59)
         const today = new Date();
+        console.log(`today date and time is ${today}`);
+
         const startOfDay = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 0, 0, 0));
         const endOfDay = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate(), 23, 59, 59));
 
@@ -78,28 +80,22 @@ export const getDailySummary = async (city) => {
 
         // Return the summary or handle the case where no data is found for the current day
         if (summary.length > 0) {
-            // console.log('Weather summary for today:', summary[0]);
 
-            // Check if today's summary already exists in WeatherSummary collection
-            const existingSummary = await WeatherSummary.findOne({ city, timestamp: { $gte: startOfDay, $lt: endOfDay } });
+            console.log('Weather summary for today:', summary[0]);
+            const newSummary = new WeatherSummary({
+                city: city,
+                avg_temp: summary[0].avg_temp,
+                max_temp: summary[0].max_temp,
+                min_temp: summary[0].min_temp,
+                weather: summary[0].weather,
+                timestamp: today // Store the current timestamp
+            });
 
-            // If no existing summary, create a new one
-            if (!existingSummary) {
-                const newSummary = new WeatherSummary({
-                    city: city,
-                    avg_temp: summary[0].avg_temp,
-                    max_temp: summary[0].max_temp,
-                    min_temp: summary[0].min_temp,
-                    weather: summary[0].weather,
-                    timestamp: new Date() // Store the current timestamp
-                });
+            // Save the summary to the database
+            console.log("this is data getting save in the database", newSummary);
 
-                // Save the summary to the database
-                await newSummary.save();
-                // console.log('Daily summary saved to the database:', newSummary);
-            } else {
-                console.log(`Summary for ${city} already exists for today.`);
-            }
+            await newSummary.save();
+            // console.log('Daily summary saved to the database:', newSummary);
 
             // Return the aggregated summary data to the user
             return summary[0];

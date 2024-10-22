@@ -128,7 +128,7 @@ const WeatherSummary = ({ city }) => {
                     <div className="weather-info-row">
                         <div className="weather-info-item">
                             <ReactAnimatedWeather icon="WIND" size="40" />
-                            <p className="wind">{summary.avg_speed} m/s</p>
+                            <p className="wind">{renderTemperature(summary.avg_speed)} m/s</p>
                             <p>Wind speed</p>
                         </div>
                         <div className="weather-info-item">
