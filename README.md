@@ -167,7 +167,3 @@ Frontend will be running on `http://localhost:3000`.
 - For production use, consider using a more scalable database such as PostgreSQL or MySQL.
 
 ---
-
-## License
-
-This project is licensed under the MIT License.
