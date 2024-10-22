@@ -6,6 +6,8 @@ const weatherSchema = new mongoose.Schema({
     timestamp: { type: Date, default: Date.now },
     weather: { type: String, required: true },
     temp: { type: Number, required: true },
+    speed: { type: Number },
+    humidity: { type: Number },
     feels_like: { type: Number, required: true },
 });
 

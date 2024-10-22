@@ -5,8 +5,7 @@ const thresholdSchema = new mongoose.Schema({
     tempThreshold: { type: Number, required: true },
     consecutiveLimit: { type: Number, default: 2 },
     consecutiveBreaches: { type: Number, default: 0 },
-    emailAlert: { type: Boolean, default: false },
-    recipient: { type: String },  // Email recipient
+    email: { type: String },  // Email recipient
 });
 
 const Threshold = mongoose.model('Threshold', thresholdSchema);

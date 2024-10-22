@@ -17,6 +17,8 @@ async function fetchWeatherData(city) {
         weather: data.weather[0].main,
         temp: kelvinToCelsius(data.main.temp),
         feels_like: kelvinToCelsius(data.main.feels_like),
+        speed: data.wind.speed,
+        humidity: data.main.humidity,
         timestamp: new Date(data.dt * 1000),
     };
 }
@@ -34,10 +36,7 @@ export async function storeAndProcessWeatherData() {
 
 
             // Check for temperature threshold breach
-            console.log("this is before threshold check");
-
             await checkThreshold(city, weatherData);
-            console.log("this is after threshold check");
 
         } catch (err) {
             console.error(`Error fetching data for ${city}:`, err);
@@ -70,6 +69,8 @@ export const getDailySummary = async (city) => {
                     avg_temp: { $avg: "$temp" },
                     max_temp: { $max: "$temp" },
                     min_temp: { $min: "$temp" },
+                    avg_speed: { $avg: "$speed" },
+                    avg_humidity: { $avg: "$humidity" },
                     weather: { $first: "$weather" },
                 }
             }
@@ -136,11 +137,11 @@ export const weatherHistory = async (req, res) => {
                 // Group by date to aggregate the weather data for each day
                 $group: {
                     _id: "$date", // Group by the date (YYYY-MM-DD)
-                    avg_temp: { $avg: "$temp" }, // Calculate average temperature
-                    max_temp: { $max: "$temp" }, // Find the maximum temperature
-                    min_temp: { $min: "$temp" }, // Find the minimum temperature
-                    weather: { $first: "$weather" }, // You can adjust this to how you want to handle weather conditions
-                    timestamp: { $first: "$timestamp" } // Capture a representative timestamp for sorting
+                    avg_temp: { $avg: "$temp" },
+                    max_temp: { $max: "$temp" },
+                    min_temp: { $min: "$temp" },
+                    weather: { $first: "$weather" },
+                    timestamp: { $first: "$timestamp" },
                 }
             },
             {

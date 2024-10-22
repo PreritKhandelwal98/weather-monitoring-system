@@ -259,6 +259,97 @@ option {
   color: #f06789; /* Lighter color for less emphasis */
 }
 
+.threshold-section {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.threshold-section h4 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.5em;
+}
+
+.threshold-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+}
+
+.threshold-input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+  margin-bottom: 10px;
+  transition: border-color 0.3s ease;
+}
+
+.threshold-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.threshold-button {
+  padding: 10px 15px;
+  font-size: 1em;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.threshold-button:hover {
+  background-color: #0056b3;
+}
+
+.threshold-section .info-text {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 10px;
+}
+
+.weather-info-row {
+  display: flex;
+  justify-content: space-between; /* Distribute the items with space between */
+  align-items: center; /* Align items vertically */
+  margin-top: 10px;
+}
+
+.weather-info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 50%; /* Each item takes up half of the container */
+}
+
+.weather-info-item p {
+  margin: 5px 0; /* Add margin to space out the text */
+}
+
+.weather-info-item .wind, .weather-info-item .humidity {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+
 
 .weather-info {
   display: flex;

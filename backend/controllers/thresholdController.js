@@ -20,7 +20,8 @@ export const checkThreshold = async (city, weatherData) => {
     }
 
     const userThreshold = threshold.tempThreshold;
-    console.log("this is temp set by user", userThreshold);
+    const userEmail = threshold.email;
+    console.log("this is temp set by user", userThreshold, userEmail);
 
     const consecutiveLimit = 2;
     console.log("this is consecutive limit check", consecutiveLimit);
@@ -42,7 +43,7 @@ export const checkThreshold = async (city, weatherData) => {
         // If the limit is breached for consecutive updates, trigger an alert
         if (consecutiveBreaches[city] >= consecutiveLimit) {
             // Trigger alert (console or email)
-            triggerAlert(city, temp, userThreshold, consecutiveLimit);
+            triggerAlert(city, temp, userThreshold, consecutiveLimit, userEmail);
             console.log("alert triggered");
 
 
@@ -56,28 +57,16 @@ export const checkThreshold = async (city, weatherData) => {
 };
 
 // Function to trigger alert (email or console)
-const triggerAlert = async (city, currentTemp, thresholdTemp, consecutiveLimit) => {
+const triggerAlert = async (city, currentTemp, thresholdTemp, consecutiveLimit, userEmail) => {
     const message = `ALERT: Temperature in ${city} exceeded the threshold of ${thresholdTemp}°C for ${consecutiveLimit} consecutive updates. Current Temperature: ${currentTemp}°C`;
 
     // Log the alert to the console
     console.log(message);
 
-    // Optional: Send an email alert if needed
-    // Replace with your nodemailer setup
-    // const transporter = nodemailer.createTransport({
-    //     service: 'gmail',
-    //     auth: {
-    //         user: process.env.EMAIL_USER,
-    //         pass: process.env.EMAIL_PASS,
-    //     },
-    // });
-    // const mailOptions = {
-    //     from: process.env.EMAIL_USER,
-    //     to: 'user@example.com',  // Replace with the recipient email
-    //     subject: `Weather Alert for ${city}`,
-    //     text: message,
-    // };
-    // await transporter.sendMail(mailOptions);
+    // Send an email alert 
+    console.log(`alert to ${userEmail} is getting triggred`);
+
+    sendEmailNotification(city, message, userEmail)
 };
 
 async function sendEmailNotification(city, message, recipient) {

@@ -7,6 +7,7 @@ import { toast } from 'react-toastify'
 const WeatherSummary = ({ city }) => {
     const [summary, setSummary] = useState(null);
     const [threshold, setThresholdTemp] = useState('');
+    const [email, setEmail] = useState(''); // New state for email input
     const [isCelsius, setIsCelsius] = useState(true); // Track temperature unit
     const [forecast, setForecast] = useState([]); // 5-day forecast data
 
@@ -41,12 +42,14 @@ const WeatherSummary = ({ city }) => {
             await setThreshold({
                 city,
                 tempThreshold: parseFloat(threshold),
+                email
             });
             toast.success(`Alert set successfully for ${city}`);
             setThresholdTemp('');
+            setEmail(''); // Clear email after submission
         } catch (error) {
             console.error('Error setting threshold:', error);
-            alert('Failed to set threshold.');
+            toast.error('Failed to set threshold.');
         }
     };
 
@@ -63,8 +66,6 @@ const WeatherSummary = ({ city }) => {
             return convertToFahrenheit(temperature).toFixed(2); // Show two decimal places in Fahrenheit
         }
     };
-
-
 
     // Toggle temperature unit
     const toggleTemperatureUnit = () => {
@@ -98,8 +99,6 @@ const WeatherSummary = ({ city }) => {
         }
     };
 
-
-
     // Render loading state
     if (!summary) return <div className="text-center">Loading...</div>;
 
@@ -120,8 +119,26 @@ const WeatherSummary = ({ city }) => {
                                 </sup>
                             </p>
                             <p className="weather-des">{summary.weather}</p>
+
+                        </div>
+
+
+
+                    </div>
+                    <div className="weather-info-row">
+                        <div className="weather-info-item">
+                            <ReactAnimatedWeather icon="WIND" size="40" />
+                            <p className="wind">{summary.avg_speed} m/s</p>
+                            <p>Wind speed</p>
+                        </div>
+                        <div className="weather-info-item">
+                            <ReactAnimatedWeather icon="RAIN" size="40" />
+                            <p className="humidity">{summary.avg_humidity}%</p>
+                            <p>Humidity</p>
                         </div>
                     </div>
+
+
                     <div className="summary-details">
                         <p><strong>Min Temperature:</strong> {renderTemperature(summary.min_temp)}°C</p>
                         <p><strong>Max Temperature:</strong> {renderTemperature(summary.max_temp)}°C</p>
@@ -130,7 +147,6 @@ const WeatherSummary = ({ city }) => {
                 </div>
             </div>
             <small className="info-text">Above is the summarized insights of the city {city} </small>
-
 
             {/* Threshold form */}
             <div className="threshold-section">
@@ -144,7 +160,17 @@ const WeatherSummary = ({ city }) => {
                             onChange={(e) => setThresholdTemp(e.target.value)}
                             required
                             className="threshold-input"
-                            placeholder='Enter Temprature'
+                            placeholder='Enter Temperature'
+                        />
+                        <br />
+                        <label>Get Alert On (Email): </label>
+                        <input
+                            type="email"
+                            value={email} // Use the email state
+                            onChange={(e) => setEmail(e.target.value)} // Set email
+                            required
+                            className="threshold-input"
+                            placeholder='Enter Email'
                         />
                     </div>
                     <button type="submit" className="threshold-button">
@@ -152,11 +178,9 @@ const WeatherSummary = ({ city }) => {
                     </button>
                 </form>
             </div>
-            <small className="info-text">You can set the alert if certain temprature breaches</small>
+            <small className="info-text">You can set the alert if certain temperature breaches</small>
 
-
-
-            {/* 5-Day Forecast */}
+            {/* Previous Day's Forecast */}
             <div className="forecast-section">
                 <h4>Previous Days Weather Records</h4> {/* Since it's historical data, we reflect that in the title */}
                 <div className="forecast-container">
@@ -187,7 +211,6 @@ const WeatherSummary = ({ city }) => {
             <small className="info-text">The above detail is about previous day's weather history</small>
 
         </div>
-
     );
 };
 
