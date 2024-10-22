@@ -4,6 +4,12 @@
 
 This project is a real-time weather monitoring system that retrieves weather data from the OpenWeatherMap API at regular intervals. It processes the data to compute daily weather summaries, tracks threshold breaches for alerts, and visualizes the historical data and weather trends.
 
+<img width="943" alt="weather-1" src="https://github.com/user-attachments/assets/42c4bf94-6f0a-49cd-8b72-58f85dd0c5c6">
+
+<img width="938" alt="weather-2" src="https://github.com/user-attachments/assets/a71063bd-9ddd-4f73-8e4f-3d43642c6dc6">
+
+<img width="946" alt="weather-3" src="https://github.com/user-attachments/assets/6ce7a2ac-3c3e-4cf4-b02f-557d62861d4d">
+
 ### Features:
 
 - Retrieve real-time weather data for six major Indian cities (Delhi, Mumbai, Chennai, Bangalore, Kolkata, Hyderabad) using OpenWeatherMap API.
