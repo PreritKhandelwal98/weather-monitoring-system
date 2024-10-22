@@ -62,7 +62,7 @@ This project is a real-time weather monitoring system that retrieves weather dat
 
 3. **Persistent Storage:**
 
-   - Mongo is used for storing daily summaries and for tracking weather trends over time.
+   - MongoDB is used for storing daily summaries and for tracking weather trends over time.
 
 4. **Alerting:**
    - Configurable thresholds for alerts (e.g., temperatures exceeding 35°C for two consecutive intervals). Alerts can be sent via email or displayed in the server console.
